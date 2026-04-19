@@ -5,12 +5,14 @@ const app = express();
 
 import { CommonHelper } from "../helper/common_helper";
 import { httpCodes } from "../helper/httpCodes";
+import { ILoggedInUser  } from "../helper/common_middleware";
 
 import { createClient } from "redis";
 import connectDb from "../configuration/db";
-import { connectRabbitMQ } from "../configuration/rabbitmq";
+// import { connectRabbitMQ } from "../configuration/rabbitmq";
 connectDb();
-connectRabbitMQ()
+// connectRabbitMQ()
+
 
 export const redisClient = createClient({
     url: process.env.REDIS_URL as string
@@ -28,6 +30,11 @@ let global_helper = new CommonHelper();
 
 
 declare global {
+     namespace Express {
+        interface Request {
+            user: ILoggedInUser;
+        }
+    }
     var Helpers: typeof global_helper;
     var HttpCodes: typeof httpCodes;
  

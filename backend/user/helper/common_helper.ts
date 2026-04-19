@@ -2,6 +2,7 @@ import { IMethodNotAllowed, sendBadRequest, successResponse } from "./common_int
 import { httpCodes } from "./httpCodes";
 
 export class CommonHelper {
+
     public capitalizeFirstLetter(obj: { [key: string]: any }): object {
         obj.status.message = obj.status.message.toLowerCase();
         obj.status.message = obj.status.message.charAt(0).toUpperCase() + obj.status.message.slice(1);
@@ -48,6 +49,7 @@ export class CommonHelper {
         res.status(global.HttpCodes.HTTP_RESPONSE_BAD_REQUEST);
         res.send({ response: this.capitalizeFirstLetter(response_data) });
     }
+
     notAuthorized(res: sendBadRequest, msg: string) {
 
         let response_data = {
@@ -60,15 +62,7 @@ export class CommonHelper {
         res.send({ response: this.capitalizeFirstLetter(response_data) });
     }
 
-    // successFromService = (msg: string, data: object) => {
-    //     let successObj = {
-    //         status: true,
-    //         status_code: global.HttpCodes.HTTP_RESPONSE_OK,
-    //         data: data,
-    //         message: msg
-    //     }
-    //     return successObj;
-    // }
+   
     successFromService = (msg: string, data: object) => {
         let make_status_obj = {
             status: true,
@@ -78,6 +72,7 @@ export class CommonHelper {
         };
         return make_status_obj;
     }
+
     errorFromService = (msg: string) => {
         let responseObj = {
             status: false,
@@ -86,7 +81,6 @@ export class CommonHelper {
         }
         return responseObj;
     }
-
 
     notFoundResponse = (msg: string) => {
         let responseObj = {

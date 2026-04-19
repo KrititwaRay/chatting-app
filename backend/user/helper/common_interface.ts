@@ -13,3 +13,14 @@ export interface sendBadRequest {
     status(value2: number): object,
     send(value1: object): object
 }
+
+
+export interface IParamsWithId {
+    id: string;
+}
+
+export interface ILoggedInUser {
+    _id: string;
+    iat?: number;
+    exp?: number;
+}

@@ -1,16 +1,17 @@
 import { validationResult } from "express-validator";
 import { successResponse } from "./common_interface";
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
-// export interface IJwtPayload {
-//     _id: string;
-//     iat?: number;
-//     exp?: number;
-// }
+
+export interface ILoggedInUser {
+    _id: string;
+    iat?: number;
+    exp?: number;
+}
 
 export interface AuthenticatedRequest extends Request {
-    user?: object | null
+    user: ILoggedInUser;
 }
 
 export class CommonMiddleware {
@@ -28,8 +29,8 @@ export class CommonMiddleware {
 
             const decodedValue = jwt.verify(
                 token as string,
-                process.env.JWT_SECRET as string  // <-- fix
-            ) as JwtPayload;
+                process.env.JWT_SECRET as string
+            ) as ILoggedInUser;
 
             if (!decodedValue || !decodedValue._id) {
                 return global.Helpers.notAuthorized(res, "Access denied. Please login.");
@@ -38,7 +39,7 @@ export class CommonMiddleware {
             req.user = decodedValue;
 
             next();
-             
+
         } catch (error) {
             return global.Helpers.sendBadRequest(res, 'Something went wrong. Please try again.')
         }

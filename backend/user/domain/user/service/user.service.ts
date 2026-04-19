@@ -8,7 +8,7 @@ export class UserService {
     loginService = async (reqBody: ILogin): Promise<any> => {
         try {
 
-            const { email, name, image } = reqBody;
+            const { email, name } = reqBody;
 
             let user = await User.findOne({ email, isDeleted: false });
 
@@ -16,9 +16,7 @@ export class UserService {
                 user = await User.create({
                     email,
                     name,
-                    image,
                     isDeleted: false
-
                 })
             }
 
@@ -41,22 +39,40 @@ export class UserService {
         }
     }
 
-    profileDetailsService = async (reqBody: any): Promise<any> => {
+
+}
+
+
+
+
+
+
+/* 
+
+
+
+ updateProfileDetailsService = async (reqBody: IUpdateProfileDetailsService, loginUser: ILoggedInUser, params: IParamsWithId): Promise<any> => {
 
         try {
-            const user = await User.findOne({
-                _id: reqBody._id,
-                isDeleted: false
-            }).select("-createdAt -updatedAt");
 
-            if (!user) {
-                return global.Helpers.notFoundResponse("User not found.")
+            if (loginUser._id.toString() !== params.id) {
+                return global.Helpers.errorFromService("Unauthorized profile update attempt.")
             }
-            return global.Helpers.successFromService("Data fetched successfully.", user)
+
+            let updated_data = await User.findByIdAndUpdate(loginUser._id, reqBody, { new: true });
+
+            if (!updated_data) {
+                return global.Helpers.errorFromService(
+                    "Profile update failed. Please try again later."
+                );
+            }
+
+            return global.Helpers.successFromService("Data updated successfully.", { updated_data })
 
         } catch (error) {
+            console.log(error)
             return global.Helpers.errorFromService("Something went wrong, please try again later.")
         }
     }
 
-}
+*/
