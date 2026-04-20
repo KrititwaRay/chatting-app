@@ -9,9 +9,11 @@ import { ILoggedInUser  } from "../helper/common_middleware";
 
 import { createClient } from "redis";
 import connectDb from "../configuration/db";
-// import { connectRabbitMQ } from "../configuration/rabbitmq";
+import { connectRabbitMQ } from "../configuration/rabbitmq";
+
+
 connectDb();
-// connectRabbitMQ()
+connectRabbitMQ()
 
 
 export const redisClient = createClient({

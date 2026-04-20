@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { UserService } from "../service/user.service"
+import { UserService } from "../service/user.service";
+
 
 
 export class UserController {
@@ -8,6 +9,9 @@ export class UserController {
 
     login = async (req: Request, res: Response) => {
         try {
+
+          
+
 
             let response_data = await this._userService.loginService(req.body);
 

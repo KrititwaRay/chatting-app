@@ -81,6 +81,14 @@ export class CommonHelper {
         }
         return responseObj;
     }
+    rateLimitError  = (msg: string) => {
+        let responseObj = {
+            status: false,
+            status_code: global.HttpCodes.HTTP_RESPONSE_TOO_MANY_REQUESTS,
+            message: msg
+        }
+        return responseObj;
+    }
 
     notFoundResponse = (msg: string) => {
         let responseObj = {
@@ -91,8 +99,8 @@ export class CommonHelper {
         return responseObj;
     }
 
-    generatdigitOtp = () => {
-        const randomNumber = Math.floor(1000 + Math.random() * 9000);
+    generate6digitOtp = () => {
+        const randomNumber = Math.floor(100000 + Math.random() * 9000).toString();
         return randomNumber;
 
     }

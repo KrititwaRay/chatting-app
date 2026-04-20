@@ -1,21 +1,39 @@
 import { ILogin } from "../interface/user_interface";
 import { User } from "../model/user.model";
 import jwt, { SignOptions } from "jsonwebtoken";
-
+import { redisClient } from "../../../src/app"; 
 export class UserService {
 
 
     loginService = async (reqBody: ILogin): Promise<any> => {
         try {
 
-            const { email, name } = reqBody;
+            const { email } = reqBody;
+
+
+            const rateLimitKey = `otp:ratelimit: ${email}`
+            const rateLimit = await redisClient.get(rateLimitKey);
+
+            if (rateLimit) {
+                return global.Helpers.rateLimitError(
+                    "Too many OTP requests. Please wait before trying again."
+                );
+            }
+
+            const otp = global.Helpers.generate6digitOtp();
+            const otpKey = `otp:${email}`;
+            await redisClient.set(otpKey, otp, {
+                EX:300
+            } )
+            await redisClient.set(rateLimitKey, "true", {
+                EX: 60
+            })
 
             let user = await User.findOne({ email, isDeleted: false });
 
             if (!user) {
                 user = await User.create({
                     email,
-                    name,
                     isDeleted: false
                 })
             }
