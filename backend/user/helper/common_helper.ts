@@ -3,7 +3,7 @@ import { httpCodes } from "./httpCodes";
 
 export class CommonHelper {
 
-    public capitalizeFirstLetter(obj: { [key: string]: any }): object {
+    capitalizeFirstLetter(obj: { [key: string]: any }): object {
         obj.status.message = obj.status.message.toLowerCase();
         obj.status.message = obj.status.message.charAt(0).toUpperCase() + obj.status.message.slice(1);
         return obj;
@@ -89,6 +89,12 @@ export class CommonHelper {
             message: msg
         }
         return responseObj;
+    }
+
+    generatdigitOtp = () => {
+        const randomNumber = Math.floor(1000 + Math.random() * 9000);
+        return randomNumber;
+
     }
 
 }

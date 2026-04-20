@@ -75,4 +75,8 @@ export class UserService {
         }
     }
 
+
+      if (!user) {
+                return global.Helpers.notFoundResponse("User not found.")
+            }
 */
