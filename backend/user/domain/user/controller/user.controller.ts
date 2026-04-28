@@ -10,9 +10,6 @@ export class UserController {
     login = async (req: Request, res: Response) => {
         try {
 
-          
-
-
             let response_data = await this._userService.loginService(req.body);
 
             if (response_data.status) {
