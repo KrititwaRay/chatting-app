@@ -11,20 +11,23 @@ import { createClient } from "redis";
 import connectDb from "../configuration/db";
 import { connectRabbitMQ } from "../configuration/rabbitmq";
 
-
+/* MongoDb */
 connectDb();
-connectRabbitMQ()
+
+/* RabbitMQ */
+// connectRabbitMQ()
 
 
+/* Redis */
 export const redisClient = createClient({
     url: process.env.REDIS_URL as string
 })
 
-redisClient.connect().then(() => {
+/* redisClient.connect().then(() => {
     console.log(`✅ Connected to Redis!`)
 }).catch((error: any) => {
     console.log(`Unable to connect Redis `, error)
-})
+}) */
 
 
 

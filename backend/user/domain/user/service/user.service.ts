@@ -10,8 +10,7 @@ export class UserService {
 
             const { email } = reqBody;
 
-
-            const rateLimitKey = `otp:ratelimit: ${email}`
+            const rateLimitKey = `otp:ratelimit:${email}`
             const rateLimit = await redisClient.get(rateLimitKey);
 
             if (rateLimit) {
@@ -23,7 +22,7 @@ export class UserService {
             const otp = global.Helpers.generate6digitOtp();
             const otpKey = `otp:${email}`;
             await redisClient.set(otpKey, otp, {
-                EX:300
+                EX: 300
             } )
             await redisClient.set(rateLimitKey, "true", {
                 EX: 60
