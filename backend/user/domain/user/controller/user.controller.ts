@@ -23,7 +23,22 @@ export class UserController {
 
     }
 
+    verifyUser = async (req: Request, res: Response) => {
+        try {
+            const response_data = await this._userService.verifyUser(req.body)
+            if (response_data.status) {
+                return global.Helpers.successResponse(res, response_data.data_sets, response_data.message);
+            } else {
+                return global.Helpers.sendBadRequest(res, response_data.message);
+            }
+        } catch (error) {
+            return global.Helpers.sendBadRequest(res, 'Something went wrong. Please try again.')
+        }
+    }
+
     
 
     
 }
+
+

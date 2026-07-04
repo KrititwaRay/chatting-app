@@ -26,5 +26,14 @@ router
     .post(middleware, userController.login)
     .all(methodNotAllowed)
 
+middleware = [
+    userMiddleware.verifyUserRule(),
+    commonMiddleware.checkErrors
+]
+router
+    .route('/verify-otp')
+    .post(middleware, userController.verifyUser)
+    .all(methodNotAllowed)
+
 
 export const user_routing = router;

@@ -6,8 +6,10 @@ const app = express();
 import { CommonHelper } from "../helper/common_helper";
 import { httpCodes } from "../helper/httpCodes";
 import { ILoggedInUser  } from "../helper/common.middleware";
+import { startSendOtpConsumer } from "../configuration/rabbitmq-consumer";
 
-
+/* RabbitMQ */
+startSendOtpConsumer()
 
 let global_helper = new CommonHelper();
 

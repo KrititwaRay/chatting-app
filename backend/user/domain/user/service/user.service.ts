@@ -1,7 +1,8 @@
-import { ILogin } from "../interface/user_interface";
+import { ILogin, IVerifyUser } from "../interface/user_interface";
 import { User } from "../model/user.model";
 import jwt, { SignOptions } from "jsonwebtoken";
-import { redisClient } from "../../../src/app"; 
+import { redisClient } from "../../../src/app";
+import { publishToQueue } from "../../../configuration/rabbitmq";
 export class UserService {
 
 
@@ -23,18 +24,59 @@ export class UserService {
             const otpKey = `otp:${email}`;
             await redisClient.set(otpKey, otp, {
                 EX: 300
-            } )
+            })
             await redisClient.set(rateLimitKey, "true", {
                 EX: 60
             })
 
+            const message = {
+                to: email,
+                subject: "Your OTP Code",
+                body: `Your one-time password (OTP) is ${otp}. This code is valid for 5 minutes. Please do not share it with anyone.`
+            };
+
+            await publishToQueue('send-otp', message)
+
+            return global.Helpers.successFromService('Please check your email. Your OTP has been sent successfully.', {})
+
+        } catch (error) {
+            return global.Helpers.errorFromService("Something went wrong, please try again later.")
+
+        }
+    }
+
+
+    verifyUser = async (reqBody: IVerifyUser): Promise<any> => {
+        try {
+            const { email, otp } = reqBody;
+
+            const otpKey = `otp:${email}`;
+
+            const storedOtp = await redisClient.get(otpKey);
+
+            if (!storedOtp || storedOtp !== otp) {
+                return global.Helpers.errorFromService(
+                    "The OTP you entered is incorrect or has expired."
+                );
+            }
+
+            await redisClient.del(otpKey);
+
             let user = await User.findOne({ email, isDeleted: false });
 
             if (!user) {
-                user = await User.create({
-                    email,
-                    isDeleted: false
-                })
+
+                const saveObj: {
+                    name: string;
+                    email: string;
+                    isDeleted: boolean;
+                } = {
+                    name: email?.split("@")?.[0] ?? "",
+                    email: email ?? "",
+                    isDeleted: false,
+                };
+
+                user = await User.create(saveObj)
             }
 
             let token = jwt.sign(
@@ -45,14 +87,13 @@ export class UserService {
                 } as SignOptions
             );
 
-            return global.Helpers.successFromService("User loggedin successfully.", {
+            return global.Helpers.successFromService("User verified successfully.", {
                 user,
                 token
             })
+
         } catch (error) {
-
             return global.Helpers.errorFromService("Something went wrong, please try again later.")
-
         }
     }
 

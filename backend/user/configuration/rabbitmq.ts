@@ -14,16 +14,15 @@ export const connectRabbitMQ = async () => {
 
         })
         channel = await connection.createChannel();
-        console.log("✅ Cinnected to rabbitMQ!")
+        console.log("✅ Connected to rabbitMQ!")
     } catch (error) {
-        console.error(`Failed to connect to RabbitMQ!`, error);
-        
+        console.error(`❌ Failed to connect to RabbitMQ!`, error);   
     }
 }
 
 export const publishToQueue = async (queName: string, message: any) => {
     if(!channel){
-        console.log(`RabbitMQ channer is not initialized!`)
+        console.log(`❌ RabbitMQ channer is not initialized!`)
         return 
     }
     await channel.assertQueue(queName, { durable: true });

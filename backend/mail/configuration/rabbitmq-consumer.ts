@@ -43,7 +43,7 @@ export const startSendOtpConsumer = async () => {
                         text: body
                     })
 
-                    console.log(`OPT mail sent to ${to}`)
+                    console.log(`📩 OTP mail sent to ${to}`)
                     channel.ack(msg)
                 } catch (error) {
                     console.log("❌ Failed to send OTP! ", error)

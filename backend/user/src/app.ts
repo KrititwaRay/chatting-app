@@ -15,7 +15,7 @@ import { connectRabbitMQ } from "../configuration/rabbitmq";
 connectDb();
 
 /* RabbitMQ */
-// connectRabbitMQ()
+connectRabbitMQ()
 
 
 /* Redis */
@@ -23,11 +23,11 @@ export const redisClient = createClient({
     url: process.env.REDIS_URL as string
 })
 
-/* redisClient.connect().then(() => {
+redisClient.connect().then(() => {
     console.log(`✅ Connected to Redis!`)
 }).catch((error: any) => {
-    console.log(`Unable to connect Redis `, error)
-}) */
+    console.log(`❌ Unable to connect Redis `, error)
+})
 
 
 
@@ -49,8 +49,8 @@ global.HttpCodes = httpCodes;
 
 app.use(express.json({ limit: '150mb' }));
 
+/* Routings */
 import { app_route } from "./app_routing";
-
 app.use('/v1', app_route);
 
 const PORT = process.env.PORT; // 3000;
