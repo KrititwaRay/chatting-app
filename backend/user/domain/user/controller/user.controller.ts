@@ -56,6 +56,39 @@ export class UserController {
         }
     }
 
+    updateProfile = async (req: Request, res: Response) => {
+        try {
+
+            const loginUser = (req as AuthenticatedRequest).user;
+
+            const response_data = await this._userService.updateProfile(loginUser as ILoginUser, req.body);
+
+            if (response_data.status) {
+                return global.Helpers.successResponse(res, response_data.data_sets, response_data.message);
+            } else {
+                return global.Helpers.sendBadRequest(res, response_data.message);
+            }
+        } catch (error) {
+            return global.Helpers.sendBadRequest(res, 'Something went wrong. Please try again.')
+        }
+    }
+    getAllUsers = async (req: Request, res: Response) => {
+        try {
+
+            const loginUser = (req as AuthenticatedRequest).user;
+
+            const response_data = await this._userService.getAllUsers(loginUser as ILoginUser);
+
+            if (response_data.status) {
+                return global.Helpers.successResponse(res, response_data.data_sets, response_data.message);
+            } else {
+                return global.Helpers.sendBadRequest(res, response_data.message);
+            }
+        } catch (error) {
+            return global.Helpers.sendBadRequest(res, 'Something went wrong. Please try again.')
+        }
+    }
+
     
 
     

@@ -1,8 +1,9 @@
-import { ILogin, ILoginUser, IVerifyUser } from "../interface/user_interface";
+import { ILogin, ILoginUser, IUpdateProfile, IVerifyUser } from "../interface/user_interface";
 import { User } from "../model/user.model";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { redisClient } from "../../../src/app";
 import { publishToQueue } from "../../../configuration/rabbitmq";
+import mongoose from "mongoose";
 export class UserService {
 
 
@@ -117,6 +118,58 @@ export class UserService {
         }
     }
 
+
+    updateProfile = async (loginUser: ILoginUser, reqBody: IUpdateProfile): Promise<any> => {
+        try {
+
+            let user = await User.findOneAndUpdate(
+                { _id: loginUser._id, isDeleted: false },
+                { name: reqBody.name },
+                { new: true }
+            ).select('-createdAt -updatedAt').lean();
+
+            if (!user) {
+                return global.Helpers.errorFromService(
+                    "Unable to update your profile."
+                );
+            }
+            return global.Helpers.successFromService("Profile updated successfully.", { user })
+
+        } catch (error) {
+            return global.Helpers.errorFromService("Something went wrong, please try again later.")
+        }
+    }
+
+
+    getAllUsers = async (loginUser: ILoginUser): Promise<any> => {
+        try {
+
+            let users = await User.aggregate([
+                {
+                    $match: {
+                        _id: { $ne: new mongoose.Types.ObjectId(loginUser._id) },
+                        isDeleted: false
+                    }
+                },
+                {
+                    $sort: { name: 1 }
+                }
+            ]);
+
+            return global.Helpers.successFromService("Data fetched successfully.", { users })
+            
+        } catch (error) {
+            return global.Helpers.errorFromService("Something went wrong, please try again later.")
+        }
+    }
+
+    getSingleUser = async (): Promise<any> => {
+        try {
+
+        } catch (error) {
+            return global.Helpers.errorFromService("Something went wrong, please try again later.")
+        }
+    }
 
 }
 

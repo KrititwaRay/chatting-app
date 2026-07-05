@@ -14,3 +14,6 @@ export interface ILoginUser {
     exp: number
 
 }
+export interface IUpdateProfile {
+    name: string
+}

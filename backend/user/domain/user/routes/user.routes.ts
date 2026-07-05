@@ -45,5 +45,25 @@ router
     .get(middleware, userController.userProfile)
     .all(methodNotAllowed)
 
+middleware = [
+    commonMiddleware.isAuthenticated,
+    userMiddleware.updateProfileRule(),
+    commonMiddleware.checkErrors
+]
+router
+    .route('/update-profile')
+    .post(middleware, userController.updateProfile)
+    .all(methodNotAllowed)
+
+
+middleware = [
+    commonMiddleware.isAuthenticated,
+    commonMiddleware.checkErrors
+]
+router
+    .route('/all')
+    .get(middleware, userController.getAllUsers)
+    .all(methodNotAllowed)
+
 
 export const user_routing = router;
