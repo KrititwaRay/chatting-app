@@ -1,4 +1,4 @@
-import { ILogin, IVerifyUser } from "../interface/user_interface";
+import { ILogin, ILoginUser, IVerifyUser } from "../interface/user_interface";
 import { User } from "../model/user.model";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { redisClient } from "../../../src/app";
@@ -97,6 +97,26 @@ export class UserService {
         }
     }
 
+    userProfile = async (reqBody: ILoginUser): Promise<any> => {
+        try {
+            let user = await User.findOne({
+                _id: reqBody._id,
+                isDeleted: false
+            }, { createdAt: 0, updatedAt: 0 });
+
+            if (!user) {
+                return global.Helpers.errorFromService(
+                    "Unable to retrieve your profile."
+                );
+            }
+
+            return global.Helpers.successFromService("Data fetched successfully.", { user })
+
+        } catch (error) {
+            return global.Helpers.errorFromService("Something went wrong, please try again later.")
+        }
+    }
+
 
 }
 
@@ -137,4 +157,11 @@ export class UserService {
       if (!user) {
                 return global.Helpers.notFoundResponse("User not found.")
             }
+*/
+
+/* 
+gold 1 + 2
+pre recorded concept
+live: 
+
 */
