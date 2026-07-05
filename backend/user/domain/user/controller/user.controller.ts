@@ -35,6 +35,11 @@ export class UserController {
             return global.Helpers.sendBadRequest(res, 'Something went wrong. Please try again.')
         }
     }
+    
+
+    userProfile = async (req: Request, res: Response) => {
+        console.log("userProfile: ", req.user)
+    }
 
     
 

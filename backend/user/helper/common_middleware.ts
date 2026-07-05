@@ -3,7 +3,6 @@ import { successResponse } from "./common_interface";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-
 export interface ILoggedInUser {
     _id: string;
     iat?: number;

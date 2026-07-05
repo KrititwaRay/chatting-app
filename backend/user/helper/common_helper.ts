@@ -1,6 +1,7 @@
 import { IMethodNotAllowed, sendBadRequest, successResponse } from "./common_interface";
 import { httpCodes } from "./httpCodes";
 
+
 export class CommonHelper {
 
     capitalizeFirstLetter(obj: { [key: string]: any }): object {
@@ -104,5 +105,7 @@ export class CommonHelper {
         return randomNumber;
 
     }
+
+    
 
 }

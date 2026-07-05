@@ -36,4 +36,14 @@ router
     .all(methodNotAllowed)
 
 
+middleware = [
+    commonMiddleware.isAuthenticated,
+    commonMiddleware.checkErrors
+]
+router
+    .route('/profile')
+    .get(middleware, userController.userProfile)
+    .all(methodNotAllowed)
+
+
 export const user_routing = router;
