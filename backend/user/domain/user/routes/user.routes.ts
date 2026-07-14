@@ -66,4 +66,15 @@ router
     .all(methodNotAllowed)
 
 
+middleware = [
+    commonMiddleware.isAuthenticated,
+    userMiddleware.getSingleUserRule(),
+    commonMiddleware.checkErrors
+]
+router
+    .route('/:id')
+    .get(middleware, userController.getSingleUser)
+    .all(methodNotAllowed)
+
+
 export const user_routing = router;

@@ -163,8 +163,17 @@ export class UserService {
         }
     }
 
-    getSingleUser = async (): Promise<any> => {
+    getSingleUser = async (userId: string): Promise<any> => {
         try {
+            let user = await User.findOne({
+                _id: new mongoose.Types.ObjectId(userId),
+                isDeleted: false
+            }).select('-createdAt -updatedAt');
+
+            if (!user) {
+                return global.Helpers.errorFromService("User not found or has been deleted.")
+            }
+            return global.Helpers.successFromService("Data fetched successfully.", { user })
 
         } catch (error) {
             return global.Helpers.errorFromService("Something went wrong, please try again later.")

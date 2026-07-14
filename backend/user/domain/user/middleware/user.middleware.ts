@@ -1,4 +1,4 @@
-import { check } from "express-validator";
+import { check, param  } from "express-validator";
 
 export class UserMiddleware {
 
@@ -29,6 +29,16 @@ export class UserMiddleware {
                 .trim()
                 .escape()
         ];
+    }
+
+    getSingleUserRule(){
+        return [
+            param("id")
+            .notEmpty()
+            .withMessage("User ID is required")
+            .isMongoId()
+            .withMessage("Invalid user ID format")
+        ]
     }
 }
 
