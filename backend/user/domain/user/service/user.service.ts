@@ -143,7 +143,7 @@ export class UserService {
 
     getAllUsers = async (loginUser: ILoginUser): Promise<any> => {
         try {
-
+            
             let users = await User.aggregate([
                 {
                     $match: {

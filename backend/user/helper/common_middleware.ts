@@ -39,8 +39,25 @@ export class CommonMiddleware {
 
             next();
 
-        } catch (error) {
-            return global.Helpers.sendBadRequest(res, 'Something went wrong. Please try again.')
+        } catch (error: any) {
+            if (error.name === "TokenExpiredError") {
+                return global.Helpers.notAuthorized(
+                    res,
+                    "Your session has expired. Please login again."
+                );
+            }
+
+            if (error.name === "JsonWebTokenError") {
+                return global.Helpers.notAuthorized(
+                    res,
+                    "Invalid authentication token."
+                );
+            }
+
+            return global.Helpers.sendBadRequest(
+                res,
+                "Something went wrong. Please try again."
+            );
         }
     };
 
