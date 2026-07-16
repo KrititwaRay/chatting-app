@@ -40,5 +40,5 @@ app.use((req, res, next) => {
 });
 
 app.listen(PORT, () => {
-    console.info(`App listening on port ${PORT}`)
+    console.info(`Mail service listening on port: ${PORT}`)
 });

@@ -91,11 +91,10 @@ export class UserController {
     getSingleUser = async (req: Request, res: Response) => {
         try {
 
-           
             if (req.user._id === req.params.id) {
                 return global.Helpers.sendBadRequest(res, `You cannot access your own profile using this API.`);
             }
-            
+
             const response_data = await this._userService.getSingleUser(req.params.id as string);
 
             if (response_data.status) {
@@ -104,6 +103,7 @@ export class UserController {
                 return global.Helpers.sendBadRequest(res, response_data.message);
             }
         } catch (error) {
+            console.log(error)
             return global.Helpers.sendBadRequest(res, 'Something went wrong. Please try again.')
         }
     }
