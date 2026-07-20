@@ -1,4 +1,4 @@
-import { check } from "express-validator";
+import { check, param } from "express-validator";
 
 export class ChatMiddleware {
 
@@ -34,6 +34,7 @@ export class ChatMiddleware {
                 .custom((value, { req }) => {
 
                     const files = req.files as Express.Multer.File[];
+                    console.log(files)
 
                     if (!files || files.length === 0) {
                         return true; // media is optional
@@ -80,6 +81,16 @@ export class ChatMiddleware {
 
                     return true;
                 }),
+        ]
+    }
+
+    getMessagesByChatRule(){
+        return [
+            param("chatId")
+                .notEmpty()
+                .withMessage("Chat ID is required")
+                .isMongoId()
+                .withMessage("Invalid chat ID format")
         ]
     }
 

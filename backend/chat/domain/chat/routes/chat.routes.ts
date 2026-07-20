@@ -41,7 +41,7 @@ router
     .all(methodNotAllowed)
 
 
-
+// Need to modify validation. cloudinary
 middleware = [
     commonMiddleware.isAuthenticated,
     upload.array("media", 10),
@@ -51,6 +51,17 @@ middleware = [
 router
     .route('/message')
     .post(middleware, chatController.sendMessage)
+    .all(methodNotAllowed)
+
+
+middleware = [
+    commonMiddleware.isAuthenticated,
+    chatMiddleware.getMessagesByChatRule(),
+    commonMiddleware.checkErrors
+]
+router
+    .route('/message/:chatId')
+    .get(middleware, chatController.getMessagesByChat)
     .all(methodNotAllowed)
 
 export const chat_routing = router;

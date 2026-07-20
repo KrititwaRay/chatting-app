@@ -171,19 +171,19 @@ export class ChatService {
     ): Promise<any> => {
         try {
             const { chatId, text } = reqBody;
-            console.log(files)
+            
             /* 
             [
-      {
-        fieldname: 'media',
-        originalname: 'Screenshot 2026-03-01 213552.png',
-        encoding: '7bit',
-        mimetype: 'image/png',
-        path: 'https://res.cloudinary.com/dizwhybrr/image/upload/v1784528104/chat-images/vkjntmtisczabsbxzeqf.png',
-        size: 7938,
-        filename: 'chat-images/vkjntmtisczabsbxzeqf'
-      }
-    ]
+                {
+                    fieldname: 'media',
+                    originalname: 'Screenshot 2026-03-01 213552.png',
+                    encoding: '7bit',
+                    mimetype: 'image/png',
+                    path: 'https://res.cloudinary.com/dizwhybrr/image/upload/v1784528104/chat-images/vkjntmtisczabsbxzeqf.png',
+                    size: 7938,
+                    filename: 'chat-images/vkjntmtisczabsbxzeqf'
+                }
+            ]
             
             */
 
@@ -193,7 +193,7 @@ export class ChatService {
             });
 
             if (!chat) {
-                return global.Helpers.errorFromService("Chat not found.");
+                return global.Helpers.notFoundResponse("Chat not found.");
             }
 
 
@@ -203,7 +203,7 @@ export class ChatService {
             );
 
             if (!isUserInChat) {
-                return global.Helpers.errorFromService(
+                return global.Helpers.notFoundResponse(
                     "You are not a participant of this chat."
                 );
             }
@@ -215,7 +215,7 @@ export class ChatService {
             );
 
             if (!otherUserId) {
-                return global.Helpers.errorFromService(
+                return global.Helpers.notFoundResponse(
                     "No other user found."
                 );
             }
@@ -280,7 +280,8 @@ export class ChatService {
             // emit to socket
 
             return global.Helpers.successFromService("Message sent successfully", {
-                message: message
+                message: message,
+                senderId: loggedInUser._id
             }
             )
 
@@ -294,4 +295,88 @@ export class ChatService {
         }
     };
 
+    getMessagesByChat = async (loggedInUser: ILoggedInUser, chatId: string, token: string): Promise<any> => {
+        try {
+            
+            const chat = await Chat.findOne({
+                _id: new mongoose.Types.ObjectId(chatId),
+                isDeleted: false
+            });
+            if (!chat) {
+                return global.Helpers.notFoundResponse("Chat not found.");
+            }
+
+            const isUserInChat = chat.users.some((userId) => userId.toString() === loggedInUser._id.toString());
+            if(!isUserInChat){
+                return global.Helpers.notFoundResponse("You are not a participant of this chat.");
+            }
+
+            const messagesToMarkSeen = await Messages.find({
+                chatId: new mongoose.Types.ObjectId(chat._id),
+                isDeleted: false,
+                sender: { $ne: new mongoose.Types.ObjectId(loggedInUser._id) },
+                seen: false
+            })
+
+            let a = await Messages.updateMany({
+                chatId: new mongoose.Types.ObjectId(chat._id),
+                isDeleted: false,
+                sender: { $ne: new mongoose.Types.ObjectId(loggedInUser._id) },
+                seen: false
+            },{ seen: true, seenAt: new Date() })
+
+            console.log(a)
+
+            const messages = await Messages.find({
+                chatId: new mongoose.Types.ObjectId(chat._id),
+                isDeleted: false,
+
+            }).sort({ createdAt: 1 });
+
+
+            const otherUserId = chat.users.find((id) => id.toString() !== loggedInUser._id.toString());
+
+            
+            try {
+                console.log(otherUserId)
+
+                if (!otherUserId) {
+                    return global.Helpers.notFoundResponse("No other user found.");
+                }
+
+ 
+             const { data } = await axios.get(`${process.env.USER_SERVICE
+                 }/v1/user/${otherUserId}`,
+                 {
+                     headers: {
+                         Authorization: token.toString()
+                     }
+                 });
+ 
+ 
+                 // socket work
+ 
+ 
+                return global.Helpers.successFromService("Data fetched successfully.", {
+                    messages,
+                    user: data
+                })
+
+           } catch (error) {
+            
+             return global.Helpers.successFromService("Unknown User.", {
+                    messages,
+                    user: {
+                        _id: otherUserId,
+                        name: "Unknown User"
+                    }
+                })
+           }
+
+
+
+        } catch (error) {
+            return global.Helpers.errorFromService("Something went wrong, please try again later.")
+        }
+    }
 }
