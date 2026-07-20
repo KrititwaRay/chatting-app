@@ -11,11 +11,14 @@ const chatMiddleware = new ChatMiddleware();
 import { CommonMiddleware } from '../../../helper/common.middleware'; 
 const commonMiddleware = new CommonMiddleware();
 
+
 let middleware: any[] = [];
 
 
 import { ChatController } from "../controller/chat.controller";
 const chatController = new ChatController();
+
+import { upload } from '../../../configuration/multer';
 
 middleware = [
     commonMiddleware.isAuthenticated,
@@ -35,6 +38,19 @@ middleware = [
 router
     .route('/all')
     .get(middleware, chatController.getAllChats)
+    .all(methodNotAllowed)
+
+
+
+middleware = [
+    commonMiddleware.isAuthenticated,
+    upload.array("media", 10),
+    chatMiddleware.sendMessageRule(),
+    commonMiddleware.checkErrors
+]
+router
+    .route('/message')
+    .post(middleware, chatController.sendMessage)
     .all(methodNotAllowed)
 
 export const chat_routing = router;

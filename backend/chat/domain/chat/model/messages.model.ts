@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+/* import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface IMessage extends Document {
     chatId: Types.ObjectId;
@@ -43,4 +43,82 @@ const schema: Schema<IMessage> = new Schema(
 
 );
 
-export const Messages = mongoose.model<IMessage>("Messages", schema);
+export const Messages = mongoose.model<IMessage>("Messages", schema); */
+
+
+import mongoose, { Document, Schema, Types } from "mongoose";
+
+
+export interface IMessage extends Document {
+    chatId: Types.ObjectId;
+    sender: Types.ObjectId;
+
+    text?: string;
+
+    files?: {
+        url: string;
+        publicId: string;
+        mimetype: string;
+        type: "IMAGE" | "VIDEO" | "DOCUMENT";
+    }[];
+
+    messageType: "TEXT" | "FILE" | "MIXED";
+
+    seen: boolean;
+    seenAt?: Date;
+
+    createdAt: Date;
+    updatedAt: Date;
+
+    isDeleted: boolean;
+}
+
+
+const schema: Schema<IMessage> = new Schema(
+    {
+        chatId: { type: Schema.Types.ObjectId, ref: "Chat", required: true, index: true, },
+        sender: { type: Schema.Types.ObjectId, ref: "User", required: true, },
+        text: { type: String, trim: true, },
+        files: [
+            {
+                url: {
+                    type: String,
+                    required: true,
+                },
+
+                publicId: {
+                    type: String,
+                    required: true,
+                },
+
+                mimetype: {
+                    type: String,
+                    required: true,
+                },
+
+                type: {
+                    type: String,
+                    enum: ["IMAGE", "VIDEO", "DOCUMENT",],
+                    required: true,
+                },
+            },
+        ],
+        messageType: { type: String, enum: ["TEXT", "FILE", "MIXED",], required: true, },
+        seen: { type: Boolean, default: false, },
+        seenAt: { type: Date, },
+        isDeleted: {
+            type: Boolean, default: false, index: true,
+        },
+
+    },
+    { timestamps: true, versionKey: false, }
+
+
+
+);
+
+
+export const Messages = mongoose.model<IMessage>(
+    "Messages",
+    schema
+);
